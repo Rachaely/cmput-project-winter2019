@@ -1,2 +1,2 @@
 # cmput-project-winter2019
-Learning git
+Learning git today!
