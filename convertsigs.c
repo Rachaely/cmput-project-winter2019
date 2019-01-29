@@ -8,35 +8,42 @@
 
 #define MAX_TEXT 20
 
-int ascii, element_pointer;
+int ascii, element_pos = 0, test = 0;
 //ascii is the ascii number of the letter sent though signals, 8 bit
-//element_pointer points the 8 bit of binary ascii from left to right
+//element_pos points the 8 bit of binary ascii from left to right
 void handler(int signal)
 {
     
-
+    test++;
     if (signal == SIGUSR1)
     {
         
         printf("1");
-        ascii += 1<<(7-element_pointer);
+        ascii += 1<<(7-element_pos);
         
-        element_pointer = (element_pointer+1)%8;
+        
+        
     }
     else if (signal == SIGUSR2)
     {
         printf("0");
-        element_pointer = (element_pointer+1)%8;
+        
+        
     }
-    printf("pointer is %d, ascii is %d\n",element_pointer, ascii);
-    if (element_pointer == 0)
+    if (++element_pos == 8){
+            element_pos = 0;
+        } 
+    
+    printf("pointer is %d, ascii is %d\n",element_pos, ascii);
+    if (element_pos == 0)
     {   
         
         putchar((char)ascii);
         ascii = 0;
-        element_pointer = 0;
+        element_pos = 0;
         
     }
+
 
 }
 
@@ -62,7 +69,7 @@ int main(int argc, char const *argv[])
     while (1)
     {
         ascii = 0;
-        element_pointer = 0;
+        
         char sent_message[MAX_TEXT];
         
         scanf("%s", sent_message);
@@ -95,8 +102,8 @@ int main(int argc, char const *argv[])
             }
         }
         
+        
     }
 
     return 0;
 }
-
