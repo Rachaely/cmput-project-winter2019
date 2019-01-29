@@ -8,29 +8,38 @@
 #define MAX_TEXT 20
 
 int ascii, element_pointer;
+char char_bin[9] = {0};
 //ascii is the ascii number of the letter sent though signals, 8 bit
 //element_pointer points the 8 bit of binary ascii from left to right
 void handler(int signal)
 {
 
+
     if (signal == SIGUSR1)
     {
-        printf("usr1  ");
-        ascii += 1 << (7 - element_pointer);
-
+        
+        
+        char_bin[element_pointer] = '1';
+        
         element_pointer++;
     }
     else if (signal == SIGUSR2)
     {
-        printf("usr2  ");
+        
+        char_bin[element_pointer] = '0';
         element_pointer++;
     }
     if (element_pointer == 8)
-    {
-        printf(" final is %c\n", ascii);
+    {   
+        char c = strtol(char_bin,0,2);
+        printf("%c",c);
+        for (int i = 0; i < 9; i++){
+            char_bin[i] = '0';
+        }
         ascii = 0;
         element_pointer = 0;
     }
+
 }
 
 int main(int argc, char const *argv[])
@@ -58,11 +67,11 @@ int main(int argc, char const *argv[])
         element_pointer = 0;
         char sent_message[MAX_TEXT];
         
-        fgets(sent_message, MAX_TEXT, stdin);
+        scanf("%s", sent_message);
         
         //check if user enter a word
         if (sent_message[0] >= 33 && sent_message[0] <= 126)
-        {
+        {   
             for (int i = 0; i < strlen(sent_message); i++)
             
             //for each letter in the message
@@ -73,20 +82,21 @@ int main(int argc, char const *argv[])
                 {
                     if (sent_message[i] & (1 << j))
                     {
-                        printf("usr1  ");
+                        
                         kill(pid, SIGUSR1);
                     }
                     else
                     {
-                        printf("usr2  ");
+                        
                         kill(pid, SIGUSR2);
                     }
-                    sleep(1);
+                    usleep(200);
 
                     //putchar((sent_message[i]&(1<<j))?'1':'0');
                 }
             }
         }
+        
     }
 
     return 0;
