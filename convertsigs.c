@@ -14,14 +14,14 @@ void handler(int signal)
 
     if (signal == SIGUSR1)
     {
-        printf("1");
+        
         ascii += 1 << (7 - element_pointer);
 
         element_pointer++;
     }
     else if (signal == SIGUSR2)
     {
-        printf("0");
+        
         element_pointer++;
     }
     if (element_pointer == 8)
@@ -58,24 +58,26 @@ int main(int argc, char const *argv[])
         char sent_message[MAX_TEXT];
         
         fgets(sent_message, MAX_TEXT, stdin);
-
+        
         //check if user enter a word
         if (sent_message[0] >= 33 && sent_message[0] <= 126)
         {
-            for (int i = 0; i < strlen(sent_message) + 1; i++)
+            for (int i = 0; i < strlen(sent_message); i++)
+            
             //for each letter in the message
             {
+                
                 for (int j = 7; j >= 0; --j)
                 //encode letter into binary, order of bit is from left to right
                 {
                     if (sent_message[i] & (1 << j))
                     {
-                        printf("1");
+                        
                         kill(pid, SIGUSR1);
                     }
                     else
                     {
-                        printf("0");
+                        
                         kill(pid, SIGUSR2);
                     }
 
