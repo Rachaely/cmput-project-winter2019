@@ -28,8 +28,10 @@ void handler(int signal)
         printf("0");
         element_pointer = (element_pointer+1)%8;
     }
+    printf("pointer is %d, ascii is %d\n",element_pointer, ascii);
     if (element_pointer == 0)
     {   
+        
         putchar((char)ascii);
         ascii = 0;
         element_pointer = 0;
@@ -68,7 +70,7 @@ int main(int argc, char const *argv[])
         //check if user enter a word
         if (sent_message[0] >= 33 && sent_message[0] <= 126)
         {   
-            for (int i = 0; i < strlen(sent_message); i++)
+            for (int i = 0; i < strlen(sent_message)+1; i++)
             
             //for each letter in the message
             {
@@ -97,3 +99,4 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+
