@@ -8,20 +8,21 @@
 #define MAX_TEXT 20
 
 int ascii, element_pointer;
-
+//ascii is the ascii number of the letter sent though signals, 8 bit
+//element_pointer points the 8 bit of binary ascii from left to right
 void handler(int signal)
 {
 
     if (signal == SIGUSR1)
     {
-        
+        printf("usr1  ");
         ascii += 1 << (7 - element_pointer);
 
         element_pointer++;
     }
     else if (signal == SIGUSR2)
     {
-        
+        printf("usr2  ");
         element_pointer++;
     }
     if (element_pointer == 8)
@@ -72,14 +73,15 @@ int main(int argc, char const *argv[])
                 {
                     if (sent_message[i] & (1 << j))
                     {
-                        
+                        printf("usr1  ");
                         kill(pid, SIGUSR1);
                     }
                     else
                     {
-                        
+                        printf("usr2  ");
                         kill(pid, SIGUSR2);
                     }
+                    sleep(1);
 
                     //putchar((sent_message[i]&(1<<j))?'1':'0');
                 }
