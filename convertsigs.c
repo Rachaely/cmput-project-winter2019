@@ -60,25 +60,34 @@ void handler(int signal)
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         elapsed_time = elapsed_time_ms(&start_time, &end_time);
         //printf("time is %ld\n", elapsed_time);
-        int space;
-        space = (elapsed_time / 1200);
-        //printf("%d\n",space);
+        int  space;
+        
+        space = (int) (((double) elapsed_time / 3000.0)+0.5);
+        //printf("space is %d\n",space);
         if (space < 9)
         {
             for (int i = 0; i < space; i++)
             {
-                ascii += 1 << (7 - (i + element_pos));
-                printf("1");
-            }
-            element_pos += space;
-        }
+                
+                ascii += 1 << (7 - element_pos);
+                
+                if (++element_pos == 8){
+                    element_pos = 0;
+                    res[start] = ascii;
+                    start++;
+                    
+                    ascii =0;
 
-        printf("0");
+                }
+                
+            }
+        }
 
         //ascii += 1 << (7 - element_pos);
         //printf("ascii is %d\n",ascii);
-
+        
         element_pos = (element_pos + 1) % 8;
+        //printf("element pos is %d\n",element_pos);
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 
         break;
@@ -98,7 +107,6 @@ void handler(int signal)
     }
     if (element_pos == 0)
     {
-
         res[start] = ascii;
         start++;
         if (ascii == 10)
@@ -169,7 +177,7 @@ int main(int argc, char const *argv[])
         //check if user enter a word
         if (sent_message[0] >= 33)
         {
-            printf("\n");
+            
             //strcat(sent_message, "\n");
             for (int i = 0; i < strlen(sent_message); i++)
 
@@ -184,12 +192,12 @@ int main(int argc, char const *argv[])
                     case 1:
                         if (sent_message[i] & (1 << j))
                         {
-                            printf("1");
-                            usleep(450);
+                            //printf("1");
+                            usleep(1500);
                         }
                         else
                         {
-                            printf("0");
+                            //printf("0");
 
                             kill(pid, SIGUSR1);
                         }
