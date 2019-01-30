@@ -11,7 +11,7 @@
 
 int ascii, element_pos = 0, start = 0, sender_mode = 0;
 char res[MAX_TEXT];
-struct timespec start_time = {0, 0}, end_time = {0, 0};
+struct timespec start_time, end_time;
 unsigned long elapsed_time;
 
 //return start_time - end_time/ 10e-6
@@ -49,29 +49,35 @@ void handler(int signal)
         {
         case SIGUSR1:
             sender_mode = 1;
-            break;
+            return;
         case SIGUSR2:
             sender_mode = 2;
-            break;
-        default:
-            break;
+            return;
         }
-        break;
 
     case 1:
 
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         elapsed_time = elapsed_time_ms(&start_time, &end_time);
-        printf("time is %ld\n", elapsed_time);
+        //printf("time is %ld\n", elapsed_time);
         int space;
-        space = (elapsed_time / 300);
-        element_pos += space;
+        space = (elapsed_time / 1200);
+        //printf("%d\n",space);
+        if (space < 9)
+        {
+            for (int i = 0; i < space; i++)
+            {
+                ascii += 1 << (7 - (i + element_pos));
+                printf("1");
+            }
+            element_pos += space;
+        }
 
+        printf("0");
 
         //ascii += 1 << (7 - element_pos);
         //printf("ascii is %d\n",ascii);
-            
-        
+
         element_pos = (element_pos + 1) % 8;
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 
@@ -83,39 +89,37 @@ void handler(int signal)
         case SIGUSR2:
 
             ascii += 1 << (7 - element_pos);
-            
+
         case SIGUSR1:
         default:
             element_pos = (element_pos + 1) % 8;
             break;
         }
-        if (element_pos == 0)
-        {
+    }
+    if (element_pos == 0)
+    {
 
-            res[start] = ascii;
-            start++;
-            if (ascii == 10)
+        res[start] = ascii;
+        start++;
+        if (ascii == 10)
+        {
+            printf("!");
+            for (int i = 0;; i++)
             {
-                printf("!");
-                for (int i = 0;; i++)
+                printf("%c", res[i]);
+                if (res[i] == '\n')
                 {
-                    printf("%c", res[i]);
-                    if (res[i] == '\n')
-                    {
-                        break;
-                    }
-                }
-                //printf("!%s\n", res);
-                start = 0;
-                for (int i = 0; i < strlen(res) + 1; i++)
-                {
-                    res[i] = 0;
+                    break;
                 }
             }
-            ascii = 0;
-            
+            //printf("!%s\n", res);
+            start = 0;
+            for (int i = 0; i < strlen(res) + 1; i++)
+            {
+                res[i] = 0;
+            }
         }
-        
+        ascii = 0;
     }
 }
 
@@ -186,7 +190,7 @@ int main(int argc, char const *argv[])
                         else
                         {
                             printf("0");
-                            
+
                             kill(pid, SIGUSR1);
                         }
                         break;
